@@ -1,3 +1,5 @@
 #!/bin/bash
 # Filter the JSON output
-aws ec2 describe-instances |  jq -c '( .Reservations[].Instances[] | [ .InstanceType, .InstanceLifecycle, .State["Name"] ])'
+aws ec2 describe-instances |  \
+  jq -c '( .Reservations[].Instances[] | [ .InstanceType, .InstanceId, .InstanceLifecycle, .State["Name"] ])' | \
+  grep -E -v 'terminated|stopped'

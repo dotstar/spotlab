@@ -1,0 +1,4 @@
+#!/bin/bash
+cmd="aws ec2 run-instances --launch-template LaunchTemplateName=TemplateForSpot,Version=1 --instance-market-options MarketType=spot"
+echo "running\n$cmd"
+$cmd

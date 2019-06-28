@@ -1,0 +1,40 @@
+#!/bin/bash
+# Region for this AMI is us-east-2 - Ohio
+export subnet=subnet-012f088c2337443ed
+export ami=ami-0d8f6eb4f641ef691  # Amazon Linux2 for x86 - us-east-2
+export tmpfile=/tmp/create-launch-template.$$
+export launchtemplate="HybernateTemplate"
+
+# Delete template if it already exists
+aws ec2 delete-launch-template --launch-template-name $launchtemplate --region us-east-2
+ 
+cat - > $tmpfile << EOF
+{
+  "NetworkInterfaces": [
+    {
+      "DeviceIndex": 0,
+      "SubnetId": "${subnet}"
+    }
+  ],
+  "ImageId": "${ami}",
+  "InstanceType": "m4.large",
+  "TagSpecifications": [
+    {
+      "ResourceType": "instance",
+      "Tags": [
+        {
+          "Key": "Name",
+          "Value": "${launchtemplate}"
+        }
+      ]
+    }
+  ]
+}
+EOF
+aws ec2 create-launch-template --region us-east-2 \
+   --launch-template-name $launchtemplate \
+   --version-description "Practice hybernation" \
+   --launch-template-data file://${tmpfile}
+rm $tmpfile
+
+# Launch a spot instance with this template
