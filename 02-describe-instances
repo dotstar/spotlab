@@ -1,0 +1,3 @@
+#!/bin/bash
+# Filter the JSON output
+aws ec2 describe-instances |  jq -c '( .Reservations[].Instances[] | [ .InstanceType, .InstanceLifecycle, .State["Name"] ])'
