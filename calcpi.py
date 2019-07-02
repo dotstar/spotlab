@@ -45,8 +45,11 @@ def calcPi(limit):  # Generator function
 def main():  # Wrapper function
 
     # Calls CalcPi with the given limit
-    pi_digits = calcPi(int(input(
-        "Enter the number of decimals to calculate to: ")))
+    # pi_digits = calcPi(int(input(
+    #    "Enter the number of decimals to calculate to: ")))
+    
+    pi_digits = calcPi(999999999)
+    print("calculating pi to {} digits ...".format(pi_digits))
 
     i = 0
 
