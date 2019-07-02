@@ -13,6 +13,7 @@ export securitygroupids="sg-0053a9c08f7fa80d0"
 # Delete template if it already exists
 aws ec2 delete-launch-template --launch-template-name $launchtemplate --region ${region} > /dev/null 2> /dev/null
  
+# create the launch template
 cat - > $tmpfile << EOF
 {
   "ImageId": "${ami}",
@@ -40,11 +41,11 @@ cat - > $tmpfile << EOF
   ]
 }
 EOF
-# cat $tmpfile
 aws ec2 create-launch-template --region ${region} \
    --launch-template-name $launchtemplate \
    --version-description "Practice hybernation" \
    --launch-template-data file://${tmpfile}
+
 rm $tmpfile
 
 # Launch a spot instance with this template

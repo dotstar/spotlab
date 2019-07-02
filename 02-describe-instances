@@ -1,5 +1,6 @@
 #!/bin/bash
 # Filter the JSON output
-aws ec2 describe-instances |  \
+export region=us-east-2
+aws ec2 describe-instances --region ${region} |  \
   jq -c '( .Reservations[].Instances[] | [ .InstanceType, .InstanceId, .InstanceLifecycle, .State["Name"] ])' | \
   grep -E -v 'terminated|stopped'
