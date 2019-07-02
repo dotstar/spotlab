@@ -22,9 +22,7 @@ cat - > $tmpfile << EOF
   "BlockDeviceMappings": [
     {
       "DeviceName": "/dev/xvda",
-      "Ebs": {
-        "VolumeSize": 48
-      }
+      "Ebs": { "VolumeSize": 16 }
     }
   ],
   "InstanceMarketOptions": {
@@ -37,17 +35,12 @@ cat - > $tmpfile << EOF
   "TagSpecifications": [
     {
       "ResourceType": "instance",
-      "Tags": [
-        {
-          "Key": "Name",
-          "Value": "${instancename}"
-        }
-      ]
+      "Tags": [ { "Key": "Name", "Value": "${instancename}" } ]
     }
   ]
 }
 EOF
-cat $tmpfile
+# cat $tmpfile
 aws ec2 create-launch-template --region ${region} \
    --launch-template-name $launchtemplate \
    --version-description "Practice hybernation" \
@@ -55,8 +48,8 @@ aws ec2 create-launch-template --region ${region} \
 rm $tmpfile
 
 # Launch a spot instance with this template
-echo aws ec2 run-instances --launch-template LaunchTemplateName=$launchtemplate,Version=1 --instance-market-options MarketType=spot --security-group-ids $securitygroupids --subnet $subnet
 aws ec2 run-instances \
   --launch-template LaunchTemplateName=$launchtemplate,Version=1 \
   --security-group-ids $securitygroupids \
-  --subnet $subnet
+  --subnet $subnet \
+  --region ${region}
