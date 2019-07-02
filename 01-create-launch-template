@@ -9,7 +9,7 @@ export tmpfile=/tmp/create-launch-template.$$
 # 
 # Delete template if it already exists
 #
-aws ec2 delete-launch-template --launch-template-name TemplateForSpot --region ${region}
+aws ec2 delete-launch-template --launch-template-name TemplateForSpot --region ${region} > /dev/null 2> /dev/null
  
 # Create a launch template
 cat - > $tmpfile << EOF
