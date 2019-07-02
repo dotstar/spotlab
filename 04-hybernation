@@ -1,40 +1,62 @@
 #!/bin/bash
 # Region for this AMI is us-east-2 - Ohio
 export subnet=subnet-012f088c2337443ed
-export ami=ami-0d8f6eb4f641ef691  # Amazon Linux2 for x86 - us-east-2
+export ami=ami-0d8f6eb4f641ef691  # Amazon Linux for x86 - us-east-2
+export region=us-east-2
 export tmpfile=/tmp/create-launch-template.$$
 export launchtemplate="HybernateTemplate"
+export instancename="HybernateDemoInstance"
+export sshkey="daveaws"
+export securitygroupids="sg-0053a9c08f7fa80d0"
+
 
 # Delete template if it already exists
-aws ec2 delete-launch-template --launch-template-name $launchtemplate --region us-east-2
+aws ec2 delete-launch-template --launch-template-name $launchtemplate --region ${region} > /dev/null 2> /dev/null
  
 cat - > $tmpfile << EOF
 {
-  "NetworkInterfaces": [
-    {
-      "DeviceIndex": 0,
-      "SubnetId": "${subnet}"
-    }
-  ],
   "ImageId": "${ami}",
   "InstanceType": "m4.large",
+  "KeyName": "${sshkey}",
+  "SecurityGroupIds": ["${securitygroupids}"],
+  "BlockDeviceMappings": [
+    {
+      "DeviceName": "/dev/xvda",
+      "Ebs": {
+        "VolumeSize": 48
+      }
+    }
+  ],
+  "InstanceMarketOptions": {
+    "MarketType": "spot",
+    "SpotOptions": { 
+      "SpotInstanceType": "persistent",
+      "InstanceInterruptionBehavior": "hibernate" 
+    }
+  },
   "TagSpecifications": [
     {
       "ResourceType": "instance",
       "Tags": [
         {
           "Key": "Name",
-          "Value": "${launchtemplate}"
+          "Value": "${instancename}"
         }
       ]
     }
   ]
 }
 EOF
-aws ec2 create-launch-template --region us-east-2 \
+cat $tmpfile
+aws ec2 create-launch-template --region ${region} \
    --launch-template-name $launchtemplate \
    --version-description "Practice hybernation" \
    --launch-template-data file://${tmpfile}
 rm $tmpfile
 
 # Launch a spot instance with this template
+echo aws ec2 run-instances --launch-template LaunchTemplateName=$launchtemplate,Version=1 --instance-market-options MarketType=spot --security-group-ids $securitygroupids --subnet $subnet
+aws ec2 run-instances \
+  --launch-template LaunchTemplateName=$launchtemplate,Version=1 \
+  --security-group-ids $securitygroupids \
+  --subnet $subnet
