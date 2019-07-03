@@ -1,6 +1,12 @@
 #!/bin/bash
 # Filter the JSON output
 export region=us-east-2
-aws ec2 describe-instances --region ${region} |  \
-  jq -c '( .Reservations[].Instances[] | [ .InstanceType, .InstanceId, .InstanceLifecycle, .State["Name"] ])' | \
-  grep -E -v 'terminated|stopped'
+
+if [[ $(which jq 2>/dev/null) ]]; then
+  # if jq is installed filter the json return value from describe-instances
+ aws ec2 describe-instances --region ${region} |  \
+   jq -c '( .Reservations[].Instances[] | [ .InstanceType, .InstanceId, .InstanceLifecycle, .State["Name"] ])' | \
+   grep -E -v 'terminated|stopped'
+else
+  aws ec2 describe-instances --region ${region}
+fi
