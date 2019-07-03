@@ -1,4 +1,5 @@
 #!/bin/bash
-aws ec2 create-fleet \
+export region="us-east-2"
+aws ec2 create-fleet --region $region \
    --launch-template-configs LaunchTemplateSpecification="{LaunchTemplateName=TemplateForSpot,Version=1}" \
    --target-capacity-specification TotalTargetCapacity=3,OnDemandTargetCapacity=1,DefaultTargetCapacityType=spot
