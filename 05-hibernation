@@ -1,19 +1,22 @@
 #!/bin/bash
-# Region for this AMI is us-east-2 - Ohio
+#
+# For the lab, you will need to select subnet, sshkey, and securitygrouid
+# which are unique to your account.
 export subnet=subnet-012f088c2337443ed
-export ami=ami-0d8f6eb4f641ef691  # Amazon Linux for x86 - us-east-2
-export region=us-east-2
-export tmpfile=/tmp/create-launch-template.$$
-export launchtemplate="HybernateTemplate"
-export instancename="HybernateDemoInstance"
 export sshkey="daveaws"
 export securitygroupids="sg-0053a9c08f7fa80d0"
+# Region for this AMI is us-east-2 - Ohio
+export region=us-east-2
+export ami=ami-0d8f6eb4f641ef691  # Amazon Linux for x86 - us-east-2
+export launchtemplate="HybernateTemplate"
+export instancename="HybernateDemoInstance"
 
 
 # Delete template if it already exists
 aws ec2 delete-launch-template --launch-template-name $launchtemplate --region ${region} > /dev/null 2> /dev/null
  
 # create the launch template
+export tmpfile=/tmp/create-launch-template.$$
 cat - > $tmpfile << EOF
 {
   "ImageId": "${ami}",
@@ -23,7 +26,7 @@ cat - > $tmpfile << EOF
   "BlockDeviceMappings": [
     {
       "DeviceName": "/dev/xvda",
-      "Ebs": { "VolumeSize": 16 }
+      "Ebs": { "VolumeSize": 24 }
     }
   ],
   "InstanceMarketOptions": {

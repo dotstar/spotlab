@@ -28,6 +28,11 @@ cat - > $tmpfile << EOF
       "Tags": [ { "Key": "Name", "Value": "EC2SpotImmersionDay" } ]
     }
   ]
+  "InstanceMarketOptions": {
+     "SpotOptions": { 'SpotInstanceType": "one-time" }
+  }
+
+
 }
 EOF
 aws ec2 create-launch-template --region ${region} \
