@@ -2,7 +2,7 @@
 ## July 2019
 
 
-spotlab_v3.pdf describes detailed lab instructions.
+SpotLab_v4.pdf describes detailed lab instructions.
 
 Other content supports running CLI commands, prescribed in the lab instructions
 
